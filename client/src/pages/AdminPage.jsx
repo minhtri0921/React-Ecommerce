@@ -92,13 +92,14 @@ const AdminPage = () => {
   };
 
   const handleDeleteProduct = async (productId) => {
+    console.log(productId);
     try {
       // Gửi request để xóa sản phẩm dựa vào productId
-      await axios.delete(`http://localhost:3001/products/${productId}`);
+      await axios.put(`https://wm-shop-be.onrender.com/api/v1/products/changeStatus?productId=${productId}&status=false`);
 
       // Lấy danh sách sản phẩm mới sau khi xóa
-      const response = await axios.get("http://localhost:3001/products");
-      setProductList(response.data);
+      // const response = await axios.get("http://localhost:3001/products");
+      // setProductList(response.data);
     } catch (error) {
       console.error("Error deleting product:", error);
     }
