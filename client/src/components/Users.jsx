@@ -8,8 +8,8 @@ const UserTable = () => {
   useEffect(() => {
     async function getUsers() {
       try {
-        const response = await axios("http://localhost:3001/users");
-        const data = response.data;
+        const response = await axios("https://wm-shop-be.onrender.com/api/v1/managers/users");
+        const data = response.data.data;
         setUsers(data);
       } catch (err) {
         console.log("Error : " + err);
@@ -66,6 +66,7 @@ const UserTable = () => {
             <th>Email</th>
             <th>Password</th>
             <th>Username</th>
+            <th>Address</th>
             <th></th>
           </tr>
         </thead>
@@ -75,9 +76,10 @@ const UserTable = () => {
               <td>{user.id}</td>
               <td>{user.email}</td>
               <td>{user.password}</td>
-              <td>{user.username}</td>
+              <td>{user.lastName + user.firstName}</td>
+              <td>{user.address}</td>
               <td>
-                <button onClick={()=>deleteUser(user.id)}>Xóa</button>
+                <button style={{color:"red"}} onClick={()=>deleteUser(user.id)}>Xóa</button>
               </td>
             </tr>
           ))}

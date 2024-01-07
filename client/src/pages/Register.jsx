@@ -13,15 +13,19 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         let formData = {
-            fullName,
+            firstName:fullName,
             email,
-            password
+            password,
+            roleId:1,
+            address:'Da Nang',
+            phone:'1234567890',
+            lastName:'Le'
         }
 
         try {
             await axios({
                 method: "POST",
-                url: "http://localhost:3001/register",
+                url: "https://wm-shop-be.onrender.com/api/v1/auth/signup",
                 data: formData,
                 // headers: {
                 //     "Content-Type": "multipart/form-data",

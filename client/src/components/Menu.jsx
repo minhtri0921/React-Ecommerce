@@ -8,6 +8,7 @@ const Menu = () => {
             <div style={{ display: "flex", flexDirection: "column", padding: "10px" }}>
                 <Link to="/admin/users" style={linkStyle}>Users</Link>
                 <Link to="/admin" style={linkStyle}>Products</Link>
+                <Link to="/admin/orders" style={linkStyle}>Orders</Link>
             </div>
         </div>
     );

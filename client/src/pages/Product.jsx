@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import { Link, useParams } from "react-router-dom";
 import Marquee from "react-fast-marquee";
-import { useDispatch } from "react-redux";
-import { addCart } from "../redux/action";
 import axios from "axios";
 import { Navbar } from "../components";
 
@@ -14,10 +12,20 @@ const Product = () => {
   const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
 
-  const dispatch = useDispatch();
-
-  const addProduct = (product) => {
-    dispatch(addCart(product));
+  const addProduct = async () => {
+    const user = JSON.parse(localStorage.getItem("currentUser"))
+    const formData = {
+      quantity: 1,
+      unitPrice: product.price,
+      productId: product.id,
+      customerId: user.data.userId,
+      size: "XL",
+      color: "black",
+    };
+    await axios.post(
+      "https://wm-shop-be.onrender.com/api/v1/customer/carts",
+      formData
+    );
   };
 
   useEffect(() => {
@@ -29,20 +37,20 @@ const Product = () => {
         console.log(id);
         // const response1 = await axios(`http://localhost:3001/products/${id}`);
         const response1 = await axios(
-          `https://fakestoreapi.com/products/${id}`
+          `https://wm-shop-be.onrender.com/api/v1/customer/products/${id}`
         );
-        const prd = response1.data;
+        const prd = response1.data.data;
         setProduct(prd);
         setLoading(false);
-        console.log(prd.category);
+        console.log(prd);
 
         // const response2 = await axios(
-        //   `http://localhost:3001/products/category/${prd.category}`
+        //   `http://localhost:3001/products/categoryName/${prd.categoryName}`
         // );
         const response2 = await axios(
-          `https://fakestoreapi.com/products/category/${prd.category}`
+          `https://wm-shop-be.onrender.com/api/v1/customer/products?categoryId=${prd.categoryId}&keyword=&orderByPrice=&limit=50&fbclid=IwAR3FduGfL8aLR_Zbr_GtorCC-vO8HGqmno4UC-H-xsXsdGSsWQQUTvT6WYE`
         );
-        const data2 = response2.data;
+        const data2 = response2.data.data.data;
         setSimilarProducts(data2);
         setLoading2(false);
       } catch (error) {
@@ -54,7 +62,7 @@ const Product = () => {
 
     getProduct();
   }, [id]);
-
+  console.log(product);
   const Loading = () => {
     return (
       <>
@@ -85,24 +93,21 @@ const Product = () => {
             <div className="col-md-6 col-sm-12 py-3">
               <img
                 className="img-fluid"
-                src={product.image}
-                alt={product.title}
+                src={product.imageList}
+                alt=""
                 width="400px"
                 height="400px"
               />
             </div>
             <div className="col-md-6 col-md-6 py-5">
-              <h4 className="text-uppercase text-muted">{product.category}</h4>
-              <h1 className="display-5">{product.title}</h1>
-              <p className="lead">
-                {product.rating && product.rating.rate}{" "}
-                <i className="fa fa-star"></i>
-              </p>
+              {/* <h4 className="text-uppercase text-muted">{product.categoryName}</h4> */}
+              <h1 className="display-5">{product.name}</h1>
+
               <h3 className="display-6  my-4">${product.price}</h3>
               <p className="lead">{product.description}</p>
               <button
                 className="btn btn-outline-dark"
-                onClick={() => addProduct(product)}
+                onClick={() => addProduct(product.id)}
               >
                 Add to Cart
               </button>
@@ -149,7 +154,7 @@ const Product = () => {
                 <div key={item.id} className="card mx-4 text-center">
                   <img
                     className="card-img-top p-3"
-                    src={item.image}
+                    src={item.avatar}
                     alt="Card"
                     height={300}
                     width={300}
@@ -171,7 +176,7 @@ const Product = () => {
                     </Link>
                     <button
                       className="btn btn-dark m-1"
-                      onClick={() => addProduct(item)}
+                      onClick={() => addProduct()}
                     >
                       Add to Cart
                     </button>

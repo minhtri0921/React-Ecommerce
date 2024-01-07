@@ -10,3 +10,5 @@ export { default as Checkout } from './Checkout';
 export { default as PageNotFound } from './PageNotFound';
 export { default as AdminPage } from './AdminPage';
 export { default as UsersAdmin } from './UsersAdmin';
+export { default as Order } from './Order';
+export { default as OrdersAdmin } from './OrdersAdmin';

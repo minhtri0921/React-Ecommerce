@@ -20,7 +20,7 @@ async function getUsers() {
             resolve(result)
         })
     })
-    console.log(users);
+
 }
 router.post('/', async (req, res) => {
     await getUsers()
@@ -45,7 +45,6 @@ router.post('/', async (req, res) => {
             ...userWithoutPassword,
             token
         }
-        console.log(result);
         res.status(200).send(result);
     } else {
         res.status(500).send({ status: 'NOK' });

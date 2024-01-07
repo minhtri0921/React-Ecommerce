@@ -1,12 +1,11 @@
-import React from "react";
-import {  Navbar } from "../components";
-import { useSelector, useDispatch } from "react-redux";
-import { addCart, delCart } from "../redux/action";
+import React, { useState } from "react";
+import { Navbar } from "../components";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import axios from "axios";
 
 const Cart = () => {
-  const state = useSelector((state) => state.handleCart);
-  const dispatch = useDispatch();
+const [productOrder,setProductOrder]=useState([])
 
   const EmptyCart = () => {
     return (
@@ -23,23 +22,29 @@ const Cart = () => {
     );
   };
 
-  const addItem = (product) => {
-    dispatch(addCart(product));
-  };
-  const removeItem = (product) => {
-    dispatch(delCart(product));
-  };
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
 
+    async function getCart(){
+      const respone = await axios(`https://wm-shop-be.onrender.com/api/v1/customer/carts?customerId=${user.data.userId}`)
+      console.log(respone);
+      setProductOrder(respone.data.data)
+    }
+    getCart()
+  },[]);
+
+
+  
   const ShowCart = () => {
     let subtotal = 0;
     let shipping = 30.0;
     let totalItems = 0;
-    state.map((item) => {
-      return (subtotal += item.price * item.qty);
+    productOrder.map((item) => {
+      return (subtotal += item.unitPrice * item.quantity);
     });
 
-    state.map((item) => {
-      return (totalItems += item.qty);
+    productOrder.map((item) => {
+      return (totalItems += item.quantity);
     });
     return (
       <>
@@ -52,7 +57,7 @@ const Cart = () => {
                     <h5 className="mb-0">Item List</h5>
                   </div>
                   <div className="card-body">
-                    {state.map((item) => {
+                    {productOrder.map((item) => {
                       return (
                         <div key={item.id}>
                           <div className="row d-flex align-items-center">
@@ -62,7 +67,7 @@ const Cart = () => {
                                 data-mdb-ripple-color="light"
                               >
                                 <img
-                                  src={item.image}
+                                  src={item.imageUrl}
                                   // className="w-100"
                                   alt={item.title}
                                   width={100}
@@ -73,7 +78,7 @@ const Cart = () => {
 
                             <div className="col-lg-5 col-md-6">
                               <p>
-                                <strong>{item.title}</strong>
+                                <strong>{item.name}</strong>
                               </p>
                               {/* <p>Color: blue</p>
                               <p>Size: M</p> */}
@@ -87,18 +92,18 @@ const Cart = () => {
                                 <button
                                   className="btn px-3"
                                   onClick={() => {
-                                    removeItem(item);
+                                    
                                   }}
                                 >
                                   <i className="fas fa-minus"></i>
                                 </button>
 
-                                <p className="mx-5">{item.qty}</p>
+                                <p className="mx-5">{item.quantity}</p>
 
                                 <button
                                   className="btn px-3"
                                   onClick={() => {
-                                    addItem(item);
+                                  
                                   }}
                                 >
                                   <i className="fas fa-plus"></i>
@@ -107,8 +112,8 @@ const Cart = () => {
 
                               <p className="text-start text-md-center">
                                 <strong>
-                                  <span className="text-muted">{item.qty}</span>{" "}
-                                  x ${item.price}
+                                  <span className="text-muted">{item.quantity}</span>{" "}
+                                  x ${item.unitPrice}
                                 </strong>
                               </p>
                             </div>
@@ -129,7 +134,8 @@ const Cart = () => {
                   <div className="card-body">
                     <ul className="list-group list-group-flush">
                       <li className="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                        Products ({totalItems})<span>${Math.round(subtotal)}</span>
+                        Products ({totalItems})
+                        <span>${Math.round(subtotal)}</span>
                       </li>
                       <li className="list-group-item d-flex justify-content-between align-items-center px-0">
                         Shipping
@@ -165,9 +171,9 @@ const Cart = () => {
     <>
       <Navbar />
       <div className="container my-3 py-3">
-        <h1 className="text-center">Cart</h1>
+        <h1 className="text-center">Quantity in Cart : {productOrder.length}</h1>
         <hr />
-        {state.length > 0 ? <ShowCart /> : <EmptyCart />}
+        {productOrder.length > 0 ? <ShowCart /> : <EmptyCart />}
       </div>
     </>
   );

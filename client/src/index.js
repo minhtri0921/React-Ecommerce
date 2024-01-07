@@ -5,7 +5,7 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './redux/store';
-import { Home, Product, Products, AboutPage, ContactPage, Cart, Login, Register, Checkout, PageNotFound, AdminPage , UsersAdmin } from "./pages"
+import { Home, Product, Products, AboutPage, ContactPage, Cart, Login, Register, Checkout, PageNotFound, AdminPage , UsersAdmin , Order ,OrdersAdmin } from "./pages"
 import ToastContainer from "./ToastContainer";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -26,6 +26,8 @@ root.render(
         <Route path="/product/*" element={<PageNotFound />} />
         <Route path="/admin" element={<AdminPage/>} />
         <Route path="/admin/users" element={<UsersAdmin/>} />
+        <Route path="/admin/orders" element={<OrdersAdmin/>} />
+        <Route path="order" element={<Order/>} />
       </Routes>
       <ToastContainer />
     </Provider>

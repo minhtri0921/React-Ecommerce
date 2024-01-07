@@ -6,9 +6,11 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const Products = () => {
   const [data, setData] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [filter, setFilter] = useState(data);
   const [loading, setLoading] = useState(false);
   let componentMounted = true;
@@ -22,10 +24,12 @@ const Products = () => {
   useEffect(() => {
     const getProducts = async () => {
       setLoading(true);
-      const response = await fetch("http://localhost:3001/products");
+      const response = await axios(
+        "https://wm-shop-be.onrender.com/api/v1/customer/products?categoryId=&keyword=&orderByPrice=&limit=50"
+      );
       if (componentMounted) {
-        setData(await response.clone().json());
-        setFilter(await response.json());
+        setData(response.data.data);
+        setFilter(response.data.data.data);
         setLoading(false);
       }
 
@@ -36,6 +40,15 @@ const Products = () => {
     };
 
     getProducts();
+    // get Categories
+    const getCategories = async () => {
+      const responseCategories = await axios(
+        "https://wm-shop-be.onrender.com/api/v1/categories"
+      );
+      setCategories(responseCategories.data.data);
+    };
+    getCategories();
+
   }, []);
 
   const Loading = () => {
@@ -66,9 +79,12 @@ const Products = () => {
     );
   };
 
-  const filterProduct = (cat) => {
-    const updatedList = data.filter((item) => item.category === cat);
-    setFilter(updatedList);
+  const filterProduct = (id) => {
+   async function getPrdByCatId(){
+    const response = await axios(`https://wm-shop-be.onrender.com/api/v1/customer/products?categoryId=${id}&keyword=&orderByPrice=&limit=50`)
+    setFilter(response.data.data.data)
+   }
+   getPrdByCatId()
   };
   const ShowProducts = () => {
     return (
@@ -80,30 +96,19 @@ const Products = () => {
           >
             All
           </button>
-          <button
-            className="btn btn-outline-dark btn-sm m-2"
-            onClick={() => filterProduct("men's clothing")}
-          >
-            Men's Clothing
-          </button>
-          <button
-            className="btn btn-outline-dark btn-sm m-2"
-            onClick={() => filterProduct("women's clothing")}
-          >
-            Women's Clothing
-          </button>
-          <button
-            className="btn btn-outline-dark btn-sm m-2"
-            onClick={() => filterProduct("jewelery")}
-          >
-            Jewelery
-          </button>
-          <button
-            className="btn btn-outline-dark btn-sm m-2"
-            onClick={() => filterProduct("electronics")}
-          >
-            Electronics
-          </button>
+          {categories.map((category) => {
+            return (
+              
+                <button
+                  key={category.id}
+                  className="btn btn-outline-dark btn-sm m-2"
+                  onClick={() => filterProduct(category.id)}
+                >
+                  {category.name}
+                </button>
+              
+            );
+          })}
         </div>
 
         {filter.map((product) => {
@@ -116,17 +121,13 @@ const Products = () => {
               <div className="card text-center h-100" key={product.id}>
                 <img
                   className="card-img-top p-3"
-                  src={product.image}
+                  src={product.avatar}
                   alt="Card"
                   height={300}
                 />
                 <div className="card-body">
-                  <h5 className="card-title">
-                    {product.name}
-                  </h5>
-                  <p className="card-text">
-                    {product.description}...
-                  </p>
+                  <h5 className="card-title">{product.name}</h5>
+                  <p className="card-text">{product.description}...</p>
                 </div>
                 <ul className="list-group list-group-flush">
                   <li className="list-group-item lead">$ {product.price}</li>

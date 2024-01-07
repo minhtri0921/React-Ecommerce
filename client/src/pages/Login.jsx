@@ -23,7 +23,7 @@ const Login = () => {
       try {
         var result = await axios({
           method: "POST",
-          url: "http://localhost:3001/login",
+          url: "https://wm-shop-be.onrender.com/api/v1/auth/login",
           data: formData
         })
 
@@ -69,7 +69,7 @@ const Login = () => {
               </div>
               <div class="my-3">
                 <label for="floatingPassword display-4">Password</label>
-                <input
+                <input style={{backgroundColor: 'red'}}
                   type="password"
                   class="form-control"
                   id="floatingPassword"
